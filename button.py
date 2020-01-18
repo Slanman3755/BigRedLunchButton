@@ -1,25 +1,32 @@
 import random
 import requests
+import yaml
+from pathlib import Path
 
 
+config_file_path = str(Path.home()) + "/.bigredlunchbutton"
 messages_file_path = "messages.txt"
-api_url = "https://hooks.slack.com/services/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"
 
 
 def post_to_slack():
-    with open(messages_file_path) as messages_file:
-        messages = messages_file.readlines()
-        message = messages[random.randint(0, len(messages) - 1)]
+    with open(config_file_path) as config_file:
+        config = yaml.full_load(config_file)
+        api_url = config["url"]
 
-        text = "@here " + message
-        data = {"text": text, "link_names": 1}
-        response = requests.post(api_url, json=data)
-        code = response.status_code
+        with open(messages_file_path) as messages_file:
+            messages = messages_file.readlines()
+            message = messages[random.randint(0, len(messages) - 1)]
 
-        if code == 200:
-            print("Success")
-        else:
-            print(f"Failure {code}\n{response.content}")
+            text = "@here " + message
+            data = {"text": text, "link_names": 1}
+            response = requests.post(api_url, json=data)
+            code = response.status_code
+
+            if code == 200:
+                print("Success")
+            else:
+                print(f"Failure {code}\n{response.content}")
+                exit(1)
 
 
 def on_press():
@@ -27,6 +34,5 @@ def on_press():
 
 
 if __name__ == "__main__":
-    print("Now listening...")
     # listener.join()
     post_to_slack()
