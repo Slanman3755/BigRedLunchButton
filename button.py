@@ -1,12 +1,12 @@
 import logging
 import random
 import requests
-import time
 import yaml
 
 from gpiozero import LED, Button
 from pathlib import Path
 from pytz import timezone
+from time import sleep
 from datetime import datetime, time
 
 tz = timezone('US/Pacific')
@@ -88,7 +88,7 @@ def listen(button_pin, led_pin, api_url, messages):
                 led.off()
         else:
             led.off()
-        time.sleep(0.2)
+        sleep(0.2)
 
 
 def main():
