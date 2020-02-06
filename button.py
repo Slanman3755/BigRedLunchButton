@@ -1,6 +1,7 @@
 import logging
 import random
 import requests
+import time
 import yaml
 
 from gpiozero import LED, Button
@@ -84,9 +85,10 @@ def listen(button_pin, led_pin, api_url, messages):
                 else:
                     led.off()
             else:
-                led.on()
+                led.off()
         else:
             led.off()
+        time.sleep(0.2)
 
 
 def main():
