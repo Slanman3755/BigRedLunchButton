@@ -77,8 +77,14 @@ def listen(button_pin, led_pin, api_url, messages):
     button.when_pressed = button_pressed
     while True:
         now = datetime.now(tz=tz)
-        if is_in_window(now) and now.date() == last_posted.date():
-            led.on()
+        if is_in_window(now):
+            if last_posted:
+                if now.date() == last_posted.date():
+                    led.on()
+                else:
+                    led.off()
+            else:
+                led.on()
         else:
             led.off()
 
