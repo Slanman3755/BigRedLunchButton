@@ -9,6 +9,8 @@ from pytz import timezone
 from time import sleep
 from datetime import datetime, time
 
+cycle_time = 0.1  # seconds
+
 tz = timezone('US/Pacific')
 valid_window_start = time(11, 0, 0, tzinfo=tz)
 valid_window_end = time(14, 0, 0, tzinfo=tz)
@@ -45,7 +47,7 @@ def post_to_slack(api_url, messages):
     global last_posted
 
     message = messages[random.randint(0, len(messages) - 1)]
-    text = "@here " + message
+    text = f"@here {message}"
     data = {"text": text, "link_names": 1}
 
     response = requests.post(api_url, json=data)
@@ -65,29 +67,31 @@ def listen(button_pin, led_pin, api_url, messages):
     led = LED(led_pin)
 
     logging.info("Initialized GPIO")
+    led.blink()
 
-    def button_pressed():
+    def button_pressed(current_time):
         logging.info("Button pressed")
-        now = datetime.now(tz=tz)
-        if is_valid_press(now, last_posted):
+        if is_valid_press(current_time, last_posted):
             post_to_slack(api_url, messages)
         else:
-            logging.warning("Invalid request time")
+            logging.warning(f"Invalid request time, last post: {last_posted}")
 
-    logging.info("Listening...")
-    button.when_pressed = button_pressed
-    while True:
-        now = datetime.now(tz=tz)
-        if is_in_window(now):
-            if last_posted:
-                if now.date() == last_posted.date():
-                    led.on()
-                else:
-                    led.off()
-            else:
-                led.off()
+    def update_led(current_time):
+        if is_in_window(current_time) and last_posted and current_time.date() == last_posted.date():
+            led.on()
         else:
             led.off()
+
+    logging.info("Listening...")
+    last_button_state = False
+    while True:
+        button_state = button.is_active()
+        now = datetime.now(tz=tz)
+        if button_state and button_state != last_button_state:
+            button_pressed(now)
+        update_led(now)
+        last_button_state = button_state
+        sleep(cycle_time)
 
 
 def main():
