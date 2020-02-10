@@ -85,7 +85,7 @@ def listen(button_pin, led_pin, api_url, messages):
     logging.info("Listening...")
     last_button_state = False
     while True:
-        button_state = button.is_active()
+        button_state = button.is_active
         now = datetime.now(tz=tz)
         if button_state and button_state != last_button_state:
             button_pressed(now)
