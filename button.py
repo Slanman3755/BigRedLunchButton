@@ -88,7 +88,6 @@ def listen(button_pin, led_pin, api_url, messages):
                 led.off()
         else:
             led.off()
-        sleep(0.2)
 
 
 def main():
