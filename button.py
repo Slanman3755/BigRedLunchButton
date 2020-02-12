@@ -9,7 +9,7 @@ from pytz import timezone
 from time import sleep
 from datetime import datetime, time
 
-cycle_time = 0.1  # seconds
+cycle_time = 0.01  # seconds
 
 tz = timezone('US/Pacific')
 valid_window_start = time(11, 0, 0, tzinfo=tz)
