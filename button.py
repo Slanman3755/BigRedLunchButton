@@ -97,7 +97,7 @@ def listen(button_pin, led_pin, api_url, messages):
 def main():
     logging.info("Init")
     with open(config_file_path) as config_file:
-        config = yaml.full_load(config_file)
+        config = yaml.safe_load(config_file)
         config_file.close()
 
         button_pin = config["button_pin"]
